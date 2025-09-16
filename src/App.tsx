@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { FMEAHeader, FMEAHeaderData } from './components/FMEAHeader';
 import { FMEAForm, FMEARow } from './components/FMEAForm';
 import { FMEAGuide } from './components/FMEAGuide';
@@ -35,12 +35,13 @@ export default function App() {
     modelYear: '',
     team: '',
     preparedBy: '',
+    datePrepared: '',
     approvedBy: '',
+    dateApproved: '',
     revision: '1.0',
     page: '1 of 1',
-    // fmeaType 상태를 여기서도 제거했습니다.
-    datePrepared: undefined,
-    dateApproved: undefined
+    fmeaType: 'DFMEA',
+    fmeaNumber: '',
   });
 
   const [fmeaRows, setFmeaRows] = useState<FMEARow[]>([initialRow]);
@@ -48,25 +49,20 @@ export default function App() {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="py-8">
-        <div className="px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col lg:flex-row gap-8">
-            <div className="flex-1 min-w-0 space-y-8">
-              <div className="text-center">
-                <h1 className="text-4xl font-bold tracking-tight">FMEA 분석 도구</h1>
-                <p className="mt-2 text-lg text-muted-foreground">
-                  고장 모드 및 영향 분석 (Failure Mode and Effects Analysis)
-                </p>
-              </div>
+        {/* 최대 너비를 2560px로 제한합니다. */}
+        <div className="max-w-[2560px] mx-auto px-4 sm:px-6 lg:px-8">
+          {/* FMEA 가이드를 하단으로 내리기 위해 Flexbox 레이아웃을 제거하고 수직 구조로 변경합니다. */}
+          <div className="space-y-8">
+            <div className="text-center">
+              <h1 className="text-4xl font-bold tracking-tight">FMEA 분석 도구</h1>
+              <p className="mt-2 text-lg text-muted-foreground">
+                고장 모드 및 영향 분석 (Failure Mode and Effects Analysis)
+              </p>
+            </div>
 
-              <FMEAHeader headerData={headerData} setHeaderData={setHeaderData} />
-              <FMEAForm rows={fmeaRows} setRows={setFmeaRows} />
-            </div>
-            
-            <div className="lg:w-96 flex-shrink-0">
-              <div className="sticky top-8">
-                <FMEAGuide />
-              </div>
-            </div>
+            <FMEAHeader headerData={headerData} setHeaderData={setHeaderData} />
+            <FMEAForm rows={fmeaRows} setRows={setFmeaRows} />
+            <FMEAGuide />
           </div>
         </div>
       </div>

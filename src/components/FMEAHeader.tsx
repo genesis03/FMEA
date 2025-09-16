@@ -3,13 +3,8 @@ import { Card, CardContent } from './ui/card';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
-import { Button } from './ui/button';
-import { CalendarIcon } from 'lucide-react';
-import { Calendar } from './ui/calendar';
-import { cn } from '@/lib/utils';
-import { format } from 'date-fns';
 
+// FMEAHeaderData 인터페이스에 fmeaNumber 추가
 export interface FMEAHeaderData {
   company: string;
   productName: string;
@@ -17,12 +12,13 @@ export interface FMEAHeaderData {
   modelYear: string;
   team: string;
   preparedBy: string;
-  datePrepared?: Date;
+  datePrepared: string;
   approvedBy: string;
-  dateApproved?: Date;
+  dateApproved: string;
   revision: string;
   page: string;
   fmeaType: 'DFMEA' | 'PFMEA';
+  fmeaNumber: string; // FMEA 번호 필드 추가
 }
 
 export interface FMEAHeaderProps {
@@ -32,7 +28,7 @@ export interface FMEAHeaderProps {
 
 export function FMEAHeader({ headerData, setHeaderData }: FMEAHeaderProps) {
   
-  const updateField = (field: keyof FMEAHeaderData, value: string | Date | undefined | 'DFMEA' | 'PFMEA') => {
+  const updateField = (field: keyof FMEAHeaderData, value: string) => {
     setHeaderData(prev => ({ ...prev, [field]: value }));
   };
 
@@ -43,7 +39,7 @@ export function FMEAHeader({ headerData, setHeaderData }: FMEAHeaderProps) {
           {/* 컬럼 1 */}
           <div className="space-y-4">
             <div>
-              <Label htmlFor="company">회사명 (Company)</Label>
+              <Label htmlFor="company" className="mb-1.5 inline-block">회사명 (Company)</Label>
               <Input
                 id="company"
                 value={headerData.company}
@@ -52,7 +48,7 @@ export function FMEAHeader({ headerData, setHeaderData }: FMEAHeaderProps) {
               />
             </div>
             <div>
-              <Label htmlFor="productName">제품/부품명 (Product/Part Name)</Label>
+              <Label htmlFor="productName" className="mb-1.5 inline-block">제품/부품명 (Product/Part Name)</Label>
               <Input
                 id="productName"
                 value={headerData.productName}
@@ -61,7 +57,7 @@ export function FMEAHeader({ headerData, setHeaderData }: FMEAHeaderProps) {
               />
             </div>
             <div>
-              <Label htmlFor="productNumber">제품/부품번호 (Product/Part Number)</Label>
+              <Label htmlFor="productNumber" className="mb-1.5 inline-block">제품/부품번호 (Product/Part Number)</Label>
               <Input
                 id="productNumber"
                 value={headerData.productNumber}
@@ -70,7 +66,7 @@ export function FMEAHeader({ headerData, setHeaderData }: FMEAHeaderProps) {
               />
             </div>
             <div>
-              <Label htmlFor="modelYear">모델연도 (Model Year)</Label>
+              <Label htmlFor="modelYear" className="mb-1.5 inline-block">모델연도 (Model Year)</Label>
               <Input
                 id="modelYear"
                 value={headerData.modelYear}
@@ -83,7 +79,7 @@ export function FMEAHeader({ headerData, setHeaderData }: FMEAHeaderProps) {
           {/* 컬럼 2 */}
           <div className="space-y-4">
             <div>
-              <Label htmlFor="team">팀 (Team)</Label>
+              <Label htmlFor="team" className="mb-1.5 inline-block">팀 (Team)</Label>
               <Input
                 id="team"
                 value={headerData.team}
@@ -92,7 +88,7 @@ export function FMEAHeader({ headerData, setHeaderData }: FMEAHeaderProps) {
               />
             </div>
             <div>
-              <Label htmlFor="preparedBy">작성자 (Prepared By)</Label>
+              <Label htmlFor="preparedBy" className="mb-1.5 inline-block">작성자 (Prepared By)</Label>
               <Input
                 id="preparedBy"
                 value={headerData.preparedBy}
@@ -101,32 +97,16 @@ export function FMEAHeader({ headerData, setHeaderData }: FMEAHeaderProps) {
               />
             </div>
             <div>
-                <Label htmlFor="datePrepared">작성일 (Date Prepared)</Label>
-                <Popover>
-                    <PopoverTrigger asChild>
-                        <Button
-                            variant={"outline"}
-                            className={cn(
-                                "w-full justify-start text-left font-normal",
-                                !headerData.datePrepared && "text-muted-foreground"
-                            )}
-                        >
-                            <CalendarIcon className="mr-2 h-4 w-4" />
-                            {headerData.datePrepared ? format(headerData.datePrepared, "PPP") : <span>날짜 선택</span>}
-                        </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0">
-                        <Calendar
-                            mode="single"
-                            selected={headerData.datePrepared}
-                            onSelect={(date) => updateField('datePrepared', date)}
-                            initialFocus
-                        />
-                    </PopoverContent>
-                </Popover>
+                <Label htmlFor="datePrepared" className="mb-1.5 inline-block">작성일 (Date Prepared)</Label>
+                <Input
+                    id="datePrepared"
+                    type="date"
+                    value={headerData.datePrepared}
+                    onChange={(e) => updateField('datePrepared', e.target.value)}
+                />
             </div>
             <div>
-              <Label htmlFor="approvedBy">승인자 (Approved By)</Label>
+              <Label htmlFor="approvedBy" className="mb-1.5 inline-block">승인자 (Approved By)</Label>
               <Input
                 id="approvedBy"
                 value={headerData.approvedBy}
@@ -138,33 +118,26 @@ export function FMEAHeader({ headerData, setHeaderData }: FMEAHeaderProps) {
 
           {/* 컬럼 3 */}
           <div className="space-y-4">
-            <div>
-                <Label htmlFor="dateApproved">승인일 (Date Approved)</Label>
-                 <Popover>
-                    <PopoverTrigger asChild>
-                        <Button
-                            variant={"outline"}
-                            className={cn(
-                                "w-full justify-start text-left font-normal",
-                                !headerData.dateApproved && "text-muted-foreground"
-                            )}
-                        >
-                            <CalendarIcon className="mr-2 h-4 w-4" />
-                            {headerData.dateApproved ? format(headerData.dateApproved, "PPP") : <span>날짜 선택</span>}
-                        </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0">
-                        <Calendar
-                            mode="single"
-                            selected={headerData.dateApproved}
-                            onSelect={(date) => updateField('dateApproved', date)}
-                            initialFocus
-                        />
-                    </PopoverContent>
-                </Popover>
+             <div>
+              <Label htmlFor="fmeaNumber" className="mb-1.5 inline-block">FMEA 번호 (FMEA Number)</Label>
+              <Input
+                id="fmeaNumber"
+                value={headerData.fmeaNumber}
+                onChange={(e) => updateField('fmeaNumber', e.target.value)}
+                placeholder="FMEA 번호를 입력하세요"
+              />
             </div>
             <div>
-              <Label htmlFor="revision">개정번호 (Revision)</Label>
+                <Label htmlFor="dateApproved" className="mb-1.5 inline-block">승인일 (Date Approved)</Label>
+                <Input
+                    id="dateApproved"
+                    type="date"
+                    value={headerData.dateApproved}
+                    onChange={(e) => updateField('dateApproved', e.target.value)}
+                />
+            </div>
+            <div>
+              <Label htmlFor="revision" className="mb-1.5 inline-block">개정번호 (Revision)</Label>
               <Input
                 id="revision"
                 value={headerData.revision}
@@ -173,7 +146,7 @@ export function FMEAHeader({ headerData, setHeaderData }: FMEAHeaderProps) {
               />
             </div>
             <div>
-              <Label htmlFor="page">페이지 (Page)</Label>
+              <Label htmlFor="page" className="mb-1.5 inline-block">페이지 (Page)</Label>
               <Input
                 id="page"
                 value={headerData.page}
@@ -181,9 +154,8 @@ export function FMEAHeader({ headerData, setHeaderData }: FMEAHeaderProps) {
                 placeholder="1 of 1"
               />
             </div>
-            {/* FMEA 유형 필드 다시 추가 */}
             <div>
-              <Label htmlFor="fmeaType">FMEA 유형</Label>
+              <Label htmlFor="fmeaType" className="mb-1.5 inline-block">FMEA 유형</Label>
                <Select
                 value={headerData.fmeaType}
                 onValueChange={(value: 'DFMEA' | 'PFMEA') => updateField('fmeaType', value)}

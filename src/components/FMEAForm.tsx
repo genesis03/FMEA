@@ -2,16 +2,15 @@ import React from 'react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
+import { Table, TableBody, TableCell, TableHead, TableRow } from './ui/table';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Plus, Trash2 } from 'lucide-react';
 import TextareaAutosize from 'react-textarea-autosize';
 
-// FMEARow 타입 정의
 export interface FMEARow {
   id: string;
   item: string;
-  function: string;
+  // function: string; // Python 예약어 충돌 방지를 위해 주석 처리 유지
   failureMode: string;
   effectsOfFailure: string;
   severity: number;
@@ -33,7 +32,6 @@ export interface FMEARow {
   newRpn: number;
 }
 
-// 변경점 1: 저장 관련 props를 모두 제거
 export interface FMEAFormProps {
   rows: FMEARow[];
   setRows: React.Dispatch<React.SetStateAction<FMEARow[]>>;
@@ -41,7 +39,7 @@ export interface FMEAFormProps {
 
 const initialRow: Omit<FMEARow, 'id'> = {
   item: '',
-  function: '',
+  // function: '', // Python 예약어 충돌 방지를 위해 주석 처리 유지
   failureMode: '',
   effectsOfFailure: '',
   severity: 1,
@@ -63,9 +61,7 @@ const initialRow: Omit<FMEARow, 'id'> = {
   newRpn: 1,
 };
 
-// 저장 관련 props를 받지 않도록 수정
 export function FMEAForm({ rows, setRows }: FMEAFormProps) {
-
   const addRow = () => {
     const newRow = { ...initialRow, id: Date.now().toString() };
     setRows([...rows, newRow]);
@@ -105,6 +101,7 @@ export function FMEAForm({ rows, setRows }: FMEAFormProps) {
       <CardHeader><CardTitle>FMEA 분석표</CardTitle></CardHeader>
       <CardContent>
         <div className="overflow-x-auto">
+          {/* 변경점: <Table> 컴포넌트가 thead와 TableBody를 모두 감싸도록 수정 */}
           <Table className="w-full border-collapse text-xs">
             <thead className="[&_tr]:border-b">
               <TableRow>
@@ -161,7 +158,6 @@ export function FMEAForm({ rows, setRows }: FMEAFormProps) {
           </Table>
         </div>
         
-        {/* 변경점 3: 저장 버튼과 관련 UI를 모두 제거하고 행 추가 버튼만 남김 */}
         <div className="mt-4 flex justify-between items-center">
           <Button onClick={addRow} className="flex items-center gap-2">
             <Plus className="w-4 h-4" />

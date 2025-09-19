@@ -2,3 +2,5 @@ node_modules
 
 # Python Virtual Environment
 venv/
+
+__pycache__/
